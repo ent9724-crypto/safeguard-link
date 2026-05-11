@@ -1029,16 +1029,17 @@ class _DashboardCleanState extends State<DashboardClean> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.red.shade50,
+          backgroundColor: Colors.black87, // High contrast background
           title: Row(
             children: [
-              Icon(Icons.warning, color: Colors.red.shade700, size: 32),
+              Icon(Icons.warning, color: Colors.white, size: 32),
               const SizedBox(width: 12),
               Text(
                 'Pengesahan Kecemasan',
                 style: TextStyle(
-                  color: Colors.red.shade700,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white, // High contrast text
                 ),
               ),
             ],
@@ -1052,7 +1053,7 @@ class _DashboardCleanState extends State<DashboardClean> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Colors.white, // High contrast text
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -1061,7 +1062,7 @@ class _DashboardCleanState extends State<DashboardClean> {
                 'Sila pastikan ini adalah kecemasan sebenar sebelum membuat panggilan.',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black54,
+                  color: Colors.white, // High contrast text
                 ),
                 textAlign: TextAlign.center,
               ),
