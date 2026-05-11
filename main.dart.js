@@ -82730,8 +82730,8 @@ if(B.d.q(a,"free")||B.d.q(a,"win")||B.d.q(a,"prize"))s.push("Contains enticing k
 if(a.length>100)s.push("Unusually long URL")
 if(B.d.q(a,"http://")&&!B.d.q(a,"https://"))s.push("Non-secure HTTP protocol")
 if(B.d.q(a,A.eJ("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}",!0,!1)))s.push("Direct IP address detected")
-if(s.length===0)return"SAFE: No suspicious patterns detected.\n\n\u2705 Uses secure protocol\n\u2705 No suspicious keywords\n\u2705 No URL shorteners detected\n\u2705 Normal URL length"
-else return"SUSPICIOUS: Potential risks detected.\n\n\u26a0\ufe0f "+B.b.bC(s,"\n\u26a0\ufe0f ")+"\n\nRecommendation: Verify the source before proceeding."},
+if(s.length===0)return"SAFE: No suspicious patterns found!\n\n\u2705 Uses secure protocol\n\u2705 No bad keywords\n\u2705 Safe URL length"
+else return"DANGER: Risks detected!\n\n\u26a0\ufe0f "+B.b.bC(s,"\n\u26a0\ufe0f ")+"\n\nAsk grown-up for help!"},
 adg(){var s=this.c
 s.toString
 A.f5(!1,new A.ai9(this),s,t.z)},

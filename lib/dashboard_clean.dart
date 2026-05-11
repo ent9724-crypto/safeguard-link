@@ -901,15 +901,14 @@ class _DashboardCleanState extends State<DashboardClean> {
     }
     
     if (suspiciousIndicators.isEmpty) {
-      return 'SAFE: No suspicious patterns detected.\n\n'
+      return 'SAFE: No suspicious patterns found!\n\n'
              '✅ Uses secure protocol\n'
-             '✅ No suspicious keywords\n'
-             '✅ No URL shorteners detected\n'
-             '✅ Normal URL length';
+             '✅ No bad keywords\n'
+             '✅ Safe URL length';
     } else {
-      return 'SUSPICIOUS: Potential risks detected.\n\n'
+      return 'DANGER: Risks detected!\n\n'
              '⚠️ ${suspiciousIndicators.join('\n⚠️ ')}\n\n'
-             'Recommendation: Verify the source before proceeding.';
+             'Ask grown-up for help!';
     }
   }
 
