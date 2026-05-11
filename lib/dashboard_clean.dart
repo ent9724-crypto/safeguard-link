@@ -109,22 +109,63 @@ class _DashboardCleanState extends State<DashboardClean> {
                 SizedBox(height: isMobile ? 12 : 16),
                 
                 // Welcome Message
-                Text(
-                  _kindergartenMode 
-                    ? 'Welcome! Tap any button and I will guide you step by step.'
-                    : 'Welcome! Use simple safety tools or open more detailed parent controls.',
-                  style: TextStyle(
-                    fontSize: isMobile ? 14 : 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    height: 1.4,
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                  decoration: BoxDecoration(
+                    color: _kindergartenMode 
+                        ? const Color(0xFFFFF9C0).withOpacity(0.2)
+                        : Colors.black.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _kindergartenMode 
+                          ? const Color(0xFFffe22f).withOpacity(0.3)
+                          : Colors.white.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            _kindergartenMode ? Icons.star : Icons.info,
+                            color: _kindergartenMode ? const Color(0xFFffe22f) : Colors.white70,
+                            size: isMobile ? 20 : 24,
+                          ),
+                          SizedBox(width: isMobile ? 8 : 12),
+                          Expanded(
+                            child: Text(
+                              _kindergartenMode ? 'Fun Time!' : 'Welcome',
+                              style: TextStyle(
+                                fontSize: isMobile ? 16 : 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: isMobile ? 8 : 12),
+                      Text(
+                        _kindergartenMode 
+                          ? '🌈 Hi there! Let\'s learn about staying safe together! Tap the colorful buttons below and I\'ll help you understand everything step by step!'
+                          : 'Welcome! Use simple safety tools or open more detailed parent controls.',
+                        style: TextStyle(
+                          fontSize: isMobile ? 14 : 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 
                 SizedBox(height: isMobile ? 12 : 16),
                 
                 // Live Scam Intelligence Section
-                const LiveScamIntelligence(),
+                LiveScamIntelligence(kindergartenMode: _kindergartenMode),
                 
                 SizedBox(height: isMobile ? 16 : 20),
                 
@@ -586,7 +627,9 @@ class _DashboardCleanState extends State<DashboardClean> {
 
 // Live Scam Intelligence Stateless Widget
 class LiveScamIntelligence extends StatelessWidget {
-  const LiveScamIntelligence({super.key});
+  final bool kindergartenMode;
+  
+  const LiveScamIntelligence({super.key, this.kindergartenMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -598,9 +641,16 @@ class LiveScamIntelligence extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
           decoration: BoxDecoration(
-            color: Colors.red.withOpacity(0.3),
+            color: kindergartenMode 
+                ? const Color(0xFFFFF9C0).withOpacity(0.3)
+                : Colors.red.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.red, width: 2),
+            border: Border.all(
+              color: kindergartenMode 
+                  ? const Color(0xFFffe22f)
+                  : Colors.red, 
+              width: 2,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -609,18 +659,18 @@ class LiveScamIntelligence extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.warning,
-                    color: Colors.red,
+                    kindergartenMode ? Icons.star : Icons.warning,
+                    color: kindergartenMode ? const Color(0xFFffe22f) : Colors.red,
                     size: isMobile ? 20 : 24,
                   ),
                   SizedBox(width: isMobile ? 8 : 12),
                   Expanded(
                     child: Text(
-                      'Live Scam Intelligence',
+                      kindergartenMode ? 'Safety Adventures!' : 'Live Scam Intelligence',
                       style: TextStyle(
                         fontSize: isMobile ? 14 : 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: kindergartenMode ? const Color(0xFFffe22f) : Colors.red,
                       ),
                     ),
                   ),
@@ -630,11 +680,11 @@ class LiveScamIntelligence extends StatelessWidget {
                       vertical: isMobile ? 2 : 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.red,
+                      color: kindergartenMode ? const Color(0xFFffe22f) : Colors.red,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      'LIVE',
+                      kindergartenMode ? 'FUN' : 'LIVE',
                       style: TextStyle(
                         fontSize: isMobile ? 10 : 12,
                         fontWeight: FontWeight.bold,
@@ -652,14 +702,19 @@ class LiveScamIntelligence extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: _launchMCMCPortal,
-                  icon: Icon(Icons.security, size: isMobile ? 20 : 24),
+                  icon: Icon(
+                    kindergartenMode ? Icons.toys : Icons.security, 
+                    size: isMobile ? 20 : 24,
+                  ),
                   label: Text(
-                    'Amaran Scam Terkini (MCMC/PDRM)',
+                    kindergartenMode 
+                        ? '🎯 Learn About Bad Tricks'
+                        : 'Amaran Scam Terkini (MCMC/PDRM)',
                     style: TextStyle(fontSize: isMobile ? 14 : 16, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
+                    backgroundColor: kindergartenMode ? const Color(0xFFffe22f) : Colors.red,
+                    foregroundColor: kindergartenMode ? Colors.black : Colors.white,
                     padding: EdgeInsets.symmetric(
                       horizontal: isMobile ? 16 : 20,
                       vertical: isMobile ? 12 : 16,
@@ -684,7 +739,9 @@ class LiveScamIntelligence extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Latest Scam Tactics in Malaysia 2026:',
+                      kindergartenMode 
+                          ? '🌈 Let\'s Learn About Safety!'
+                          : 'Latest Scam Tactics in Malaysia 2026:',
                       style: TextStyle(
                         fontSize: isMobile ? 12 : 14,
                         fontWeight: FontWeight.bold,
@@ -696,10 +753,12 @@ class LiveScamIntelligence extends StatelessWidget {
                     // AI Voice Cloning
                     _buildScamItem(
                       isMobile,
-                      'AI Voice Cloning',
-                      'Jangan percaya suara kecemasan anak/cucu tanpa Safe Word.',
-                      Icons.record_voice_over,
-                      Colors.purpleAccent,
+                      kindergartenMode ? '🎭 Voice Copying Tricks' : 'AI Voice Cloning',
+                      kindergartenMode 
+                          ? 'Bad guys can copy voices! Always check with mom or dad first!'
+                          : 'Jangan percaya suara kecemasan anak/cucu tanpa Safe Word.',
+                      kindergartenMode ? Icons.emoji_emotions : Icons.record_voice_over,
+                      kindergartenMode ? Colors.purpleAccent : Colors.purpleAccent,
                       onTap: () => _showAIVoiceDetails(context),
                     ),
                     
@@ -708,10 +767,12 @@ class LiveScamIntelligence extends StatelessWidget {
                     // LHDN/PDRM Impersonation
                     _buildScamItem(
                       isMobile,
-                      'LHDN/PDRM Impersonation',
-                      'Polis tidak akan minta bayaran melalui WhatsApp.',
-                      Icons.local_police,
-                      Colors.blueAccent,
+                      kindergartenMode ? '👮 Fake Police Tricks' : 'LHDN/PDRM Impersonation',
+                      kindergartenMode 
+                          ? 'Real police never ask for money on the phone!'
+                          : 'Polis tidak akan minta bayaran melalui WhatsApp.',
+                      kindergartenMode ? Icons.security : Icons.local_police,
+                      kindergartenMode ? Colors.blueAccent : Colors.blueAccent,
                       onTap: () => _showLHDNDetails(context),
                     ),
                     
@@ -720,10 +781,12 @@ class LiveScamIntelligence extends StatelessWidget {
                     // Parcel Scams
                     _buildScamItem(
                       isMobile,
-                      'Parcel Scams',
-                      'Jangan klik link SMS dari kurier tidak dikenali.',
-                      Icons.local_shipping,
-                      Colors.orangeAccent,
+                      kindergartenMode ? '📦 Package Delivery Tricks' : 'Parcel Scams',
+                      kindergartenMode 
+                          ? 'Don\'t click links from strange delivery messages!'
+                          : 'Jangan klik link SMS dari kurier tidak dikenali.',
+                      kindergartenMode ? Icons.card_giftcard : Icons.local_shipping,
+                      kindergartenMode ? Colors.orangeAccent : Colors.orangeAccent,
                       onTap: () => _showParcelDetails(context),
                     ),
                   ],
@@ -737,24 +800,32 @@ class LiveScamIntelligence extends StatelessWidget {
                 width: double.infinity,
                 padding: EdgeInsets.all(isMobile ? 8.0 : 12.0),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: kindergartenMode 
+                      ? const Color(0xFFffe22f).withOpacity(0.1)
+                      : Colors.red.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: Colors.red.withOpacity(0.2)),
+                  border: Border.all(
+                    color: kindergartenMode 
+                        ? const Color(0xFFffe22f).withOpacity(0.2)
+                        : Colors.red.withOpacity(0.2),
+                  ),
                 ),
                 child: Row(
                   children: [
                     Icon(
-                      Icons.phone,
-                      color: Colors.red,
+                      kindergartenMode ? Icons.favorite : Icons.phone,
+                      color: kindergartenMode ? const Color(0xFFffe22f) : Colors.red,
                       size: isMobile ? 16 : 20,
                     ),
                     SizedBox(width: isMobile ? 6 : 8),
                     Expanded(
                       child: Text(
-                        'Jika sudah terpedaya, terus dail 997 (NSRC).',
+                        kindergartenMode 
+                            ? '🌟 Always tell a grown-up if something feels wrong!'
+                            : 'Jika sudah terpedaya, terus dail 997 (NSRC).',
                         style: TextStyle(
                           fontSize: isMobile ? 11 : 13,
-                          color: Colors.red,
+                          color: kindergartenMode ? const Color(0xFFffe22f) : Colors.red,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
