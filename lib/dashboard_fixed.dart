@@ -45,11 +45,19 @@ class _DashboardFixedState extends State<DashboardFixed> {
     try {
       await _guardianService.initialize();
       _isLeaderMode = await _guardianService.isLeaderMode();
-      setState(() {
-        _servicesInitialized = true;
-      });
+      if (mounted) {
+        setState(() {
+          _servicesInitialized = true;
+        });
+      }
     } catch (e) {
       debugPrint('Error initializing services: $e');
+      // Still set as initialized to prevent blank screen
+      if (mounted) {
+        setState(() {
+          _servicesInitialized = true;
+        });
+      }
     }
   }
 

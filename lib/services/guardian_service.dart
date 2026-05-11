@@ -41,7 +41,12 @@ class GuardianService {
   };
 
   Future<void> initialize() async {
-    await _notificationService.initialize();
+    try {
+      await _notificationService.initialize();
+    } catch (e) {
+      debugPrint('NotificationService initialization failed: $e');
+      // Continue without notifications
+    }
   }
 
   Future<void> saveUserRole(String role) async {
