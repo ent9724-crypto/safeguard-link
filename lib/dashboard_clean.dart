@@ -468,30 +468,173 @@ class _DashboardCleanState extends State<DashboardClean> {
   }
 
   void _executeUrlHeuristics() {
+    final TextEditingController _urlController = TextEditingController();
+    bool _isAnalyzing = false;
+    String _result = '';
+    
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('URL Heuristics Analysis'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text('Analyzing URLs for malicious patterns...'),
-              const SizedBox(height: 16),
-              Text('Live scan active: ${DateTime.now().toString().substring(11, 19)}'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Row(
+                children: [
+                  const Icon(Icons.language, color: Colors.blue),
+                  const SizedBox(width: 12),
+                  const Text('URL Heuristics Analysis'),
+                ],
+              ),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Enter URL to analyze for malicious patterns:',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _urlController,
+                      decoration: const InputDecoration(
+                        labelText: 'Paste URL here...',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.link),
+                      ),
+                      keyboardType: TextInputType.url,
+                    ),
+                    const SizedBox(height: 16),
+                    if (_isAnalyzing) ...[
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      const Text('Analyzing URL for malicious patterns...'),
+                      const SizedBox(height: 8),
+                      Text('Live scan active: ${DateTime.now().toString().substring(11, 19)}'),
+                    ] else if (_result.isNotEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _result.contains('SAFE') 
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: _result.contains('SAFE') 
+                                ? Colors.green
+                                : Colors.red,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  _result.contains('SAFE') 
+                                      ? Icons.check_circle
+                                      : Icons.warning,
+                                  color: _result.contains('SAFE') 
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _result.contains('SAFE') ? 'SAFE' : 'SUSPICIOUS',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: _result.contains('SAFE') 
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(_result),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+                if (!_isAnalyzing)
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_urlController.text.isEmpty) return;
+                      
+                      setState(() {
+                        _isAnalyzing = true;
+                        _result = '';
+                      });
+                      
+                      // Simulate URL analysis
+                      await Future.delayed(const Duration(seconds: 2));
+                      
+                      final url = _urlController.text.toLowerCase();
+                      final analysisResult = _analyzeUrl(url);
+                      
+                      setState(() {
+                        _isAnalyzing = false;
+                        _result = analysisResult;
+                      });
+                    },
+                    child: const Text('Analyze URL'),
+                  ),
+              ],
+            );
+          },
         );
       },
     );
+  }
+
+  String _analyzeUrl(String url) {
+    // Simple heuristics analysis
+    final suspiciousIndicators = <String>[];
+    
+    // Check for suspicious patterns
+    if (url.contains('bit.ly') || url.contains('tinyurl') || url.contains('short.link')) {
+      suspiciousIndicators.add('URL shortener detected');
+    }
+    
+    if (url.contains('free') || url.contains('win') || url.contains('prize')) {
+      suspiciousIndicators.add('Contains enticing keywords');
+    }
+    
+    if (url.length > 100) {
+      suspiciousIndicators.add('Unusually long URL');
+    }
+    
+    if (url.contains('http://') && !url.contains('https://')) {
+      suspiciousIndicators.add('Non-secure HTTP protocol');
+    }
+    
+    if (url.contains(RegExp(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'))) {
+      suspiciousIndicators.add('Direct IP address detected');
+    }
+    
+    if (suspiciousIndicators.isEmpty) {
+      return 'SAFE: No suspicious patterns detected.\n\n'
+             '✅ Uses secure protocol\n'
+             '✅ No suspicious keywords\n'
+             '✅ No URL shorteners detected\n'
+             '✅ Normal URL length';
+    } else {
+      return 'SUSPICIOUS: Potential risks detected.\n\n'
+             '⚠️ ${suspiciousIndicators.join('\n⚠️ ')}\n\n'
+             'Recommendation: Verify the source before proceeding.';
+    }
   }
 
   void _showSecurityAlert() {

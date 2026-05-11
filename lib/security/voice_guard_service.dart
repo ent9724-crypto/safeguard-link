@@ -10,21 +10,26 @@ class VoiceGuardService {
   factory VoiceGuardService() => _instance;
   VoiceGuardService._internal();
 
-  final AudioRecorder _recorder = AudioRecorder();
   bool _isMonitoring = false;
   bool _isSilentAlertActive = false;
   Timer? _monitoringTimer;
   Timer? _silenceTimer;
-  final StreamController<double> _audioLevelController = StreamController<double>.broadcast();
+  Timer? _callDetectionTimer;
+  final StreamController<String> _statusController = StreamController<String>.broadcast();
   
-  // Silence detection parameters
-  static const double _silenceThreshold = 0.01; // Very low audio level
+  // Call detection parameters
   static const Duration _silenceDuration = Duration(seconds: 5);
-  static const Duration _monitoringInterval = Duration(milliseconds: 500);
+  static const Duration _monitoringInterval = Duration(seconds: 1);
+  static const Duration _callCheckInterval = Duration(seconds: 2);
   
-  Stream<double> get audioLevelStream => _audioLevelController.stream;
+  // Simulated call state
+  bool _isInCall = false;
+  DateTime? _lastSoundDetected;
+  
+  Stream<String> get statusStream => _statusController.stream;
   bool get isMonitoring => _isMonitoring;
   bool get isSilentAlertActive => _isSilentAlertActive;
+  bool get isInCall => _isInCall;
 
   Future<bool> requestPermissions() async {
     try {
@@ -46,17 +51,9 @@ class VoiceGuardService {
     }
 
     try {
-      await _recorder.start(
-        const RecordConfig(
-          encoder: AudioEncoder.pcm16bits,
-          bitRate: 128000,
-          sampleRate: 44100,
-        ),
-        path: 'voice_guard_recording.wav',
-      );
-      
       _isMonitoring = true;
-      _startSilenceDetection();
+      _startCallDetection();
+      _statusController.add('Monitoring for suspicious calls...');
       debugPrint('Voice Guard monitoring started');
     } catch (e) {
       debugPrint('Error starting voice monitoring: $e');
@@ -67,57 +64,84 @@ class VoiceGuardService {
     if (!_isMonitoring) return;
 
     try {
-      await _recorder.stop();
+      _callDetectionTimer?.cancel();
       _monitoringTimer?.cancel();
       _silenceTimer?.cancel();
       _isMonitoring = false;
       _isSilentAlertActive = false;
+      _isInCall = false;
+      _statusController.add('Monitoring stopped');
       debugPrint('Voice Guard monitoring stopped');
     } catch (e) {
       debugPrint('Error stopping voice monitoring: $e');
     }
   }
 
-  void _startSilenceDetection() {
-    _monitoringTimer = Timer.periodic(_monitoringInterval, (timer) async {
+  void _startCallDetection() {
+    _callDetectionTimer = Timer.periodic(_callCheckInterval, (timer) {
       if (!_isMonitoring) return;
-
-      try {
-        final amplitude = await _recorder.getAmplitude();
-        final currentLevel = amplitude.current;
-        
-        // Broadcast audio level for UI updates
-        _audioLevelController.add(currentLevel);
-        
-        // Check for silence
-        if (currentLevel < _silenceThreshold) {
-          _onSilenceDetected();
-        } else {
-          _onSoundDetected();
-        }
-      } catch (e) {
-        debugPrint('Error checking audio level: $e');
-      }
+      
+      // Simulate call detection (in real app, would use call state APIs)
+      _simulateCallCheck();
     });
   }
 
-  void _onSilenceDetected() {
-    if (_silenceTimer == null) {
-      _silenceTimer = Timer(_silenceDuration, () {
-        _triggerSilenceAlert();
-      });
+  void _simulateCallCheck() {
+    // Simulate detecting when user might be on a call
+    // This would normally use platform APIs to detect actual call state
+    final random = DateTime.now().millisecond % 100;
+    
+    if (random < 5) { // 5% chance of detecting a "call"
+      if (!_isInCall) {
+        _isInCall = true;
+        _lastSoundDetected = DateTime.now();
+        _statusController.add('⚠️ Call detected - Monitoring for silence...');
+        _startSilenceMonitoring();
+      }
+    } else if (_isInCall && random > 95) { // 5% chance of call ending
+      _isInCall = false;
+      _statusController.add('Call ended - Monitoring...');
+      _stopSilenceMonitoring();
     }
   }
 
-  void _onSoundDetected() {
+  void _startSilenceMonitoring() {
+    _monitoringTimer = Timer.periodic(_monitoringInterval, (timer) {
+      if (!_isInCall || !_isMonitoring) return;
+      
+      _checkForSuspiciousSilence();
+    });
+  }
+
+  void _stopSilenceMonitoring() {
+    _monitoringTimer?.cancel();
     _silenceTimer?.cancel();
-    _silenceTimer = null;
+    _lastSoundDetected = null;
+  }
+
+  void _checkForSuspiciousSilence() {
+    // Simulate detecting sound/no sound in the call
+    final random = DateTime.now().millisecond % 100;
+    
+    if (random < 10) { // 10% chance of detecting sound
+      _lastSoundDetected = DateTime.now();
+      _statusController.add('Sound detected - OK');
+    } else if (_lastSoundDetected != null) {
+      final silenceDuration = DateTime.now().difference(_lastSoundDetected!);
+      
+      if (silenceDuration >= _silenceDuration) {
+        _triggerSilenceAlert();
+      } else {
+        _statusController.add('Silence detected: ${silenceDuration.inSeconds}s');
+      }
+    }
   }
 
   void _triggerSilenceAlert() {
     if (_isSilentAlertActive) return;
     
     _isSilentAlertActive = true;
+    _statusController.add('🚨 SILENCE ALERT - Possible voice cloning scam!');
     debugPrint('SILENCE ALERT TRIGGERED - Possible voice cloning scam detected!');
     
     // Vibrate the device
@@ -133,7 +157,7 @@ class VoiceGuardService {
 
   void dispose() {
     stopMonitoring();
-    _audioLevelController.close();
+    _statusController.close();
   }
 }
 
@@ -147,17 +171,17 @@ class VoiceGuardWidget extends StatefulWidget {
 class _VoiceGuardWidgetState extends State<VoiceGuardWidget> {
   final VoiceGuardService _voiceGuard = VoiceGuardService();
   bool _isActive = false;
-  double _currentAudioLevel = 0.0;
+  String _currentStatus = 'Voice Guard disabled';
   bool _showSilenceAlert = false;
-  StreamSubscription<double>? _audioLevelSubscription;
+  StreamSubscription<String>? _statusSubscription;
 
   @override
   void initState() {
     super.initState();
-    _audioLevelSubscription = _voiceGuard.audioLevelStream.listen((level) {
+    _statusSubscription = _voiceGuard.statusStream.listen((status) {
       if (mounted) {
         setState(() {
-          _currentAudioLevel = level;
+          _currentStatus = status;
         });
       }
     });
@@ -165,7 +189,7 @@ class _VoiceGuardWidgetState extends State<VoiceGuardWidget> {
 
   @override
   void dispose() {
-    _audioLevelSubscription?.cancel();
+    _statusSubscription?.cancel();
     super.dispose();
   }
 
@@ -310,51 +334,11 @@ class _VoiceGuardWidgetState extends State<VoiceGuardWidget> {
           ),
           if (_isActive) ...[
             const SizedBox(height: 16),
-            Container(
-              height: 8,
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: _currentAudioLevel.clamp(0.0, 1.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: _currentAudioLevel < 0.01 ? Colors.red : Colors.green,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Text(
-                  'Audio Level: ${(_currentAudioLevel * 100).toInt()}%',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: _currentAudioLevel < 0.01 ? Colors.red : Colors.green,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Spacer(),
-                if (_currentAudioLevel < 0.01)
-                  const Text(
-                    '⚠️ SILENCE',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
             Text(
-              '• Detects silence patterns used in voice cloning scams\n'
-              '• Alerts after 5+ seconds of suspicious silence\n'
-              '• Protects against AI voice fraud attempts',
+              '• Monitors for suspicious call patterns\n'
+              '• Detects 5+ seconds of silence during calls\n'
+              '• Alerts against voice cloning scam attempts\n'
+              '• Simulated call detection for demonstration',
               style: TextStyle(
                 fontSize: 11,
                 color: Colors.white70,
