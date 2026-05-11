@@ -43,6 +43,8 @@ dependencies:
   noise_meter: ^5.0.2
   firebase_core: ^2.24.2
   firebase_app_check: ^0.2.1+8
+  record: ^5.1.2
+  vibration: ^2.0.0
 
 dev_dependencies:
   flutter_test:

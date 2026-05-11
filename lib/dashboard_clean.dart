@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'security/secret_vault_screen.dart';
+import 'security/voice_guard_service.dart';
+import 'security/safe_identity_field.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -221,6 +224,108 @@ class _DashboardCleanState extends State<DashboardClean> {
                             padding: EdgeInsets.symmetric(vertical: isMobile ? 10 : 12),
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                SizedBox(height: isMobile ? 16 : 20),
+                
+                // 2026 Guardian Security Layers
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.purple.withOpacity(0.5)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.security,
+                            color: Colors.purple,
+                            size: isMobile ? 20 : 24,
+                          ),
+                          SizedBox(width: isMobile ? 8 : 12),
+                          Expanded(
+                            child: Text(
+                              '2026 Guardian Security',
+                              style: TextStyle(
+                                fontSize: isMobile ? 14 : 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.purple,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 6 : 8,
+                              vertical: isMobile ? 2 : 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.purple,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'ACTIVE',
+                              style: TextStyle(
+                                fontSize: isMobile ? 10 : 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: isMobile ? 12 : 16),
+                      
+                      // Bio-Vault Access
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SecretVaultScreen()),
+                            );
+                          },
+                          icon: Icon(Icons.lock, size: isMobile ? 20 : 24),
+                          label: Text('Bio-Vault (Liveness & Mirror-Block)'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 16 : 20,
+                              vertical: isMobile ? 12 : 16,
+                            ),
+                            alignment: Alignment.centerLeft,
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(height: isMobile ? 12 : 16),
+                      
+                      // Voice Guard
+                      const VoiceGuardWidget(),
+                      
+                      SizedBox(height: isMobile ? 12 : 16),
+                      
+                      // Child Guard Identity Field
+                      ChildGuardIdentityField(
+                        label: 'Protected Identity Field',
+                        hint: 'Enter IC or sensitive data...',
+                        onICDetected: (ic) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('🛑 Malaysian IC detected - Protection activated'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
