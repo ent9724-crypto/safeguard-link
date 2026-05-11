@@ -4,6 +4,7 @@ import 'security/secret_vault_screen.dart';
 import 'security/voice_guard_service.dart';
 import 'security/safe_identity_field.dart';
 import 'widgets/media_verification_widget.dart';
+import 'widgets/safety_pause_widget.dart';
 import 'nsrc_prep_page.dart';
 
 void main() {
@@ -431,6 +432,122 @@ class _DashboardCleanState extends State<DashboardClean> {
                 
                 SizedBox(height: isMobile ? 16 : 20),
                 
+                // High-Risk Actions Section
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.warning,
+                            color: Colors.orange,
+                            size: isMobile ? 20 : 24,
+                          ),
+                          SizedBox(width: isMobile ? 8 : 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'High-Risk Actions',
+                                  style: TextStyle(
+                                    fontSize: isMobile ? 14 : 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                                SizedBox(height: isMobile ? 2 : 4),
+                                Text(
+                                  'Strategic friction enabled for safety',
+                                  style: TextStyle(
+                                    fontSize: isMobile ? 11 : 12,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 6 : 8,
+                              vertical: isMobile ? 2 : 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'PROTECTED',
+                              style: TextStyle(
+                                fontSize: isMobile ? 10 : 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: isMobile ? 12 : 16),
+                      
+                      // Verify Transfer Button
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showSafetyPauseForTransfer(),
+                          icon: Icon(Icons.account_balance, size: isMobile ? 20 : 24),
+                          label: Text(
+                            'Verify Transfer',
+                            style: TextStyle(fontSize: isMobile ? 14 : 16, fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 16 : 20,
+                              vertical: isMobile ? 12 : 16,
+                            ),
+                            alignment: Alignment.centerLeft,
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(height: isMobile ? 12 : 16),
+                      
+                      // Open Bank Link Button
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showSafetyPauseForBankLink(),
+                          icon: Icon(Icons.link, size: isMobile ? 20 : 24),
+                          label: Text(
+                            'Open Bank Link',
+                            style: TextStyle(fontSize: isMobile ? 14 : 16, fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrange,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 16 : 20,
+                              vertical: isMobile ? 12 : 16,
+                            ),
+                            alignment: Alignment.centerLeft,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                SizedBox(height: isMobile ? 16 : 20),
+                
                 // Identity Vault Section
                 Container(
                   width: double.infinity,
@@ -749,6 +866,62 @@ class _DashboardCleanState extends State<DashboardClean> {
     );
   }
 
+  void _showSafetyPauseForTransfer() async {
+    await showSafetyPause(
+      context: context,
+      actionTitle: 'VERIFY TRANSFER',
+      actionDescription: 'Proceed with bank transfer verification to recipient account',
+      onProceed: () {
+        _executeTransfer();
+      },
+    );
+  }
+
+  void _showSafetyPauseForBankLink() async {
+    await showSafetyPause(
+      context: context,
+      actionTitle: 'OPEN BANK LINK',
+      actionDescription: 'Open external banking website or application',
+      onProceed: () {
+        _openBankLink();
+      },
+    );
+  }
+
+  void _executeTransfer() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Transfer verification initiated - Please check your banking app'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _openBankLink() async {
+    final Uri bankUrl = Uri.parse('https://www.maybank2u.com.my');
+    
+    try {
+      if (await canLaunchUrl(bankUrl)) {
+        await launchUrl(bankUrl, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open bank website'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error opening bank link: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   void _showSecurityAlert() {
     showDialog(
       context: context,
@@ -760,22 +933,23 @@ class _DashboardCleanState extends State<DashboardClean> {
             children: [
               Icon(Icons.security, color: Colors.red, size: 48),
               SizedBox(height: 16),
-              Text('Verify Mule Accounts via SemakMule before transfers.'),
-              SizedBox(height: 8),
-              Text('Always check bank accounts and phone numbers before making any payments.'),
+              Text(
+                'Security Alert: Verify Mule Accounts via SemakMule before transfers.',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Always verify recipient accounts before making transfers.',
+                style: TextStyle(fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('I Understand'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _launchSemakMule();
-              },
-              child: const Text('Check Now'),
             ),
           ],
         );
