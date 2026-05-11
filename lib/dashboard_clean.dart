@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'security/secret_vault_screen.dart';
 import 'security/voice_guard_service.dart';
 import 'security/safe_identity_field.dart';
+import 'widgets/media_verification_widget.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -374,6 +375,32 @@ class _DashboardCleanState extends State<DashboardClean> {
                 
                 SizedBox(height: isMobile ? 16 : 20),
                 
+                // Verify Document Button
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      _showMediaVerificationDialog();
+                    },
+                    icon: Icon(Icons.verified_user, size: isMobile ? 20 : 24),
+                    label: Text(
+                      _kindergartenMode ? '🔍 Check Document' : 'Verify Document',
+                      style: TextStyle(fontSize: isMobile ? 14 : 16, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16 : 20,
+                        vertical: isMobile ? 12 : 16,
+                      ),
+                      alignment: Alignment.centerLeft,
+                    ),
+                  ),
+                ),
+                
+                SizedBox(height: isMobile ? 16 : 20),
+                
                 // Identity Vault Section
                 Container(
                   width: double.infinity,
@@ -635,6 +662,61 @@ class _DashboardCleanState extends State<DashboardClean> {
              '⚠️ ${suspiciousIndicators.join('\n⚠️ ')}\n\n'
              'Recommendation: Verify the source before proceeding.';
     }
+  }
+
+  void _showMediaVerificationDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: const Color(0xFF1E3A5F),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          constraints: const BoxConstraints(maxHeight: 600),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.2),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.verified_user, color: Colors.purple, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _kindergartenMode ? '🔍 Document Checker' : 'Media Verification Tool',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: const MediaVerificationWidget(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _showSecurityAlert() {
