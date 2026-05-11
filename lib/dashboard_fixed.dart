@@ -385,6 +385,42 @@ class _DashboardFixedState extends State<DashboardFixed> {
             
             const SizedBox(height: 16),
             
+            // Semak Penipu (PDRM) Button
+            Container(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _launchSemakMule,
+                icon: const Icon(Icons.gavel, size: 28),
+                label: const Text(
+                  'Semak Penipu (PDRM)',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1565C0), // Dark blue for high contrast
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  minimumSize: const Size(double.infinity, 56),
+                  elevation: 4,
+                ),
+              ),
+            ),
+            
+            // Safety Guide Text
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Text(
+                'Semak nombor akaun bank atau nombor telefon di sini sebelum buat bayaran.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white70,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
             // SMS Risk Scanner Section
             Card(
               shape: RoundedRectangleBorder(
@@ -647,5 +683,22 @@ class _DashboardFixedState extends State<DashboardFixed> {
         );
       },
     );
+  }
+
+  Future<void> _launchSemakMule() async {
+    final Uri url = Uri.parse('https://semakmule.rmp.gov.my/');
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch PDRM SemakMule portal')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error opening PDRM portal: $e')),
+      );
+    }
   }
 }
