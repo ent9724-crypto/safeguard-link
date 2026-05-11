@@ -35,8 +35,8 @@ class _DashboardCleanState extends State<DashboardClean> {
       backgroundColor: const Color(0xFF1E3A5F),
       appBar: AppBar(
         title: Text(
-          _kindergartenMode ? 'Friendly Helper' : 'Parent Control Mode',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          _kindergartenMode ? '🌟 Fun Helper' : 'Parent Control Mode',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF1E3A5F),
         elevation: 0,
@@ -142,7 +142,7 @@ class _DashboardCleanState extends State<DashboardClean> {
                             child: Text(
                               _kindergartenMode ? 'Fun Time!' : 'Welcome',
                               style: TextStyle(
-                                fontSize: isMobile ? 16 : 18,
+                                fontSize: isMobile ? 18 : 22,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -153,10 +153,10 @@ class _DashboardCleanState extends State<DashboardClean> {
                       SizedBox(height: isMobile ? 8 : 12),
                       Text(
                         _kindergartenMode 
-                          ? '🌈 Hi there! Let\'s learn about staying safe together! Tap the colorful buttons below and I\'ll help you understand everything step by step!'
+                          ? '🌈 Hi little buddy! Let\'s play safe together! 🎈 Tap the colorful buttons and I\'ll teach you how to stay super safe!'
                           : 'Welcome! Use simple safety tools or open more detailed parent controls.',
                         style: TextStyle(
-                          fontSize: isMobile ? 14 : 16,
+                          fontSize: isMobile ? 16 : 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                           height: 1.4,
@@ -231,9 +231,9 @@ class _DashboardCleanState extends State<DashboardClean> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'PDRM SemakMule Integration',
+                        'Check Bad People',
                         style: TextStyle(
-                          fontSize: isMobile ? 14 : 16,
+                          fontSize: isMobile ? 18 : 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -242,7 +242,7 @@ class _DashboardCleanState extends State<DashboardClean> {
                       TextField(
                         controller: _checkController,
                         decoration: InputDecoration(
-                          hintText: 'Paste bank account or phone number here',
+                          hintText: 'Put bad guy info here',
                           hintStyle: TextStyle(color: Colors.white54),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.1),
