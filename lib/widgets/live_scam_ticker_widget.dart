@@ -56,6 +56,12 @@ class _LiveScamTickerWidgetState extends State<LiveScamTickerWidget> with Ticker
       curve: Curves.linear,
     ));
 
+    _scrollAnimation.addListener(() {
+      setState(() {
+        _scrollPosition = _scrollAnimation.value * 800; // Update position based on animation
+      });
+    });
+
     _scrollAnimation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _scrollController.reset();
