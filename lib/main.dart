@@ -2,37 +2,10 @@ import 'package:flutter/material.dart';
 import 'dashboard_clean.dart';
 
 void main() {
-  // Test with simple version first
+  // Enable full dashboard
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    title: 'Safeguard Link',
-    home: Scaffold(
-      backgroundColor: Colors.blue.shade50,
-      appBar: AppBar(
-        title: Text('Safeguard Link - Test'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.security, size: 80, color: Colors.blue),
-            SizedBox(height: 20),
-            Text(
-              'App is Loading...',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'If you see this, basic Flutter app works',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    ),
+    theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.green),
+    home: const DashboardClean(),
   ));
-  
-  // Uncomment this line to use full dashboard
-  // runApp(MaterialApp(debugShowCheckedModeBanner: false, theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.green), home: const DashboardClean()));
 }
