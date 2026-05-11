@@ -5,6 +5,7 @@ import 'security/voice_guard_service.dart';
 import 'security/safe_identity_field.dart';
 import 'widgets/media_verification_widget.dart';
 import 'widgets/safety_pause_widget.dart';
+import 'widgets/live_scam_ticker_widget.dart';
 import 'nsrc_prep_page.dart';
 
 void main() {
@@ -272,6 +273,11 @@ class _DashboardCleanState extends State<DashboardClean> {
                     ],
                   ),
                 ),
+                
+                SizedBox(height: isMobile ? 12 : 16),
+                
+                // Live Scam Intelligence Ticker
+                const LiveScamTickerWidget(),
                 
                 SizedBox(height: isMobile ? 16 : 20),
                 
