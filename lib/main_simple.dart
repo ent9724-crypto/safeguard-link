@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'dashboard_clean.dart';
 
 void main() {
-  // Test with simple version first
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'Safeguard Link',
     home: Scaffold(
       backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
-        title: Text('Safeguard Link - Test'),
+        title: const Text('Safeguard Link - Test'),
         backgroundColor: Colors.blue,
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -24,7 +23,7 @@ void main() {
             ),
             SizedBox(height: 10),
             Text(
-              'If you see this, basic Flutter app works',
+              'If you see this, the basic Flutter app works',
               style: TextStyle(fontSize: 16),
             ),
           ],
@@ -32,7 +31,4 @@ void main() {
       ),
     ),
   ));
-  
-  // Uncomment this line to use full dashboard
-  // runApp(MaterialApp(debugShowCheckedModeBanner: false, theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.green), home: const DashboardClean()));
 }
