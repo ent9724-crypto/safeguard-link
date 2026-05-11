@@ -493,9 +493,9 @@ class LiveScamIntelligence extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
           decoration: BoxDecoration(
-            color: Colors.red.withOpacity(0.1),
+            color: Colors.red.withOpacity(0.3),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.red.withOpacity(0.3)),
+            border: Border.all(color: Colors.red, width: 2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -571,9 +571,9 @@ class LiveScamIntelligence extends StatelessWidget {
                 width: double.infinity,
                 padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(color: Colors.white.withOpacity(0.3)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,7 +594,7 @@ class LiveScamIntelligence extends StatelessWidget {
                       'AI Voice Cloning',
                       'Jangan percaya suara kecemasan anak/cucu tanpa Safe Word.',
                       Icons.record_voice_over,
-                      Colors.purple,
+                      Colors.purpleAccent,
                       onTap: () => _showAIVoiceDetails(context),
                     ),
                     
@@ -606,7 +606,7 @@ class LiveScamIntelligence extends StatelessWidget {
                       'LHDN/PDRM Impersonation',
                       'Polis tidak akan minta bayaran melalui WhatsApp.',
                       Icons.local_police,
-                      Colors.blue,
+                      Colors.blueAccent,
                       onTap: () => _showLHDNDetails(context),
                     ),
                     
@@ -618,7 +618,7 @@ class LiveScamIntelligence extends StatelessWidget {
                       'Parcel Scams',
                       'Jangan klik link SMS dari kurier tidak dikenali.',
                       Icons.local_shipping,
-                      Colors.orange,
+                      Colors.orangeAccent,
                       onTap: () => _showParcelDetails(context),
                     ),
                   ],
