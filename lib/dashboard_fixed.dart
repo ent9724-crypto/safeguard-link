@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'evidence_engine.dart';
 import 'scam_tips.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'services/guardian_service.dart';
+import 'services/pin_service.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -26,6 +28,30 @@ class _DashboardFixedState extends State<DashboardFixed> {
   String _familySafeWord = "TIGER2024";
   bool _voiceGuardActive = false;
   bool _screenShieldActive = false;
+  
+  // Services
+  final GuardianService _guardianService = GuardianService();
+  final PinService _pinService = PinService();
+  bool _isLeaderMode = false;
+  bool _servicesInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeServices();
+  }
+
+  Future<void> _initializeServices() async {
+    try {
+      await _guardianService.initialize();
+      _isLeaderMode = await _guardianService.isLeaderMode();
+      setState(() {
+        _servicesInitialized = true;
+      });
+    } catch (e) {
+      debugPrint('Error initializing services: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +101,31 @@ class _DashboardFixedState extends State<DashboardFixed> {
               ),
             ),
             
+            const SizedBox(height: 12),
+            
+            // Leader Mode Toggle
+            ElevatedButton.icon(
+              onPressed: () async {
+                await _guardianService.setLeaderMode(!_isLeaderMode);
+                setState(() {
+                  _isLeaderMode = !_isLeaderMode;
+                });
+                await _guardianService.triggerSystemAlert(
+                  'Role Changed',
+                  'You are now in ${_isLeaderMode ? 'Leader' : 'Member'} mode'
+                );
+              },
+              icon: Icon(
+                Icons.admin_panel_settings,
+                color: _isLeaderMode ? Colors.orange : null,
+              ),
+              label: Text(_isLeaderMode ? 'Leader Mode' : 'Member Mode'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFff6b6b).withOpacity(0.2),
+                foregroundColor: Colors.white,
+              ),
+            ),
+            
             const SizedBox(height: 16),
             
             // Main Description
@@ -91,6 +142,43 @@ class _DashboardFixedState extends State<DashboardFixed> {
             ),
             
             const SizedBox(height: 16),
+            
+            // PIN Management
+            if (!_kindergartenMode) ...[
+              Card(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                elevation: 6,
+                color: Colors.blue[50],
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.lock, color: Colors.blue[700]),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Security PIN',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[700],
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: _showPinDialog,
+                            child: Text('Set PIN', style: TextStyle(color: Colors.blue[700])),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             
             // 997 Emergency Button
             if (_kindergartenMode) ...[
@@ -487,9 +575,77 @@ class _DashboardFixedState extends State<DashboardFixed> {
   }
 
   void _simulateScam() {
-    _smsController.text = 'URGENT: Your KWSP account has been suspended. Click http://fake-scam.com to verify immediately. Call 997 if you have questions.';
+    final scamMessage = 'URGENT: Your KWSP account has been suspended. Click http://fake-scam.com to verify immediately. Call 997 if you have questions.';
+    _smsController.text = scamMessage;
+    
+    // Scan the message using GuardianService
+    final result = _guardianService.scanMessage(scamMessage);
+    
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Scam message loaded for testing')),
+      SnackBar(
+        content: Text('Scam message loaded for testing\n$result'),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  void _showPinDialog() {
+    final TextEditingController pinController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Set Security PIN'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Enter a 4-digit PIN for security:'),
+              const SizedBox(height: 16),
+              TextField(
+                controller: pinController,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'PIN',
+                  hintText: '1234',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final pin = pinController.text;
+                if (pin.length == 4 && RegExp(r'^\d{4}$').hasMatch(pin)) {
+                  try {
+                    await _pinService.savePin(pin);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('PIN set successfully')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error setting PIN: $e')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please enter a valid 4-digit PIN')),
+                  );
+                }
+              },
+              child: const Text('Set PIN'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
