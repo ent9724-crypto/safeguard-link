@@ -19,7 +19,7 @@ void main() {
             ),
             const SizedBox(height: 20),
             const Text(
-              'If you can see this, app is working!',
+              'If you can see this, the app is working!',
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
