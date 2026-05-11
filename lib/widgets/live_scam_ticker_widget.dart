@@ -178,7 +178,7 @@ class _LiveScamTickerWidgetState extends State<LiveScamTickerWidget> with Ticker
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40,
+      height: 50, // Fixed height to prevent overflow
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: alertRed,
@@ -191,36 +191,29 @@ class _LiveScamTickerWidgetState extends State<LiveScamTickerWidget> with Ticker
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _showNSRCDialog,
-          borderRadius: BorderRadius.circular(8.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: AnimatedBuilder(
-              animation: _scrollAnimation,
-              builder: (context, child) {
-                return Stack(
-                  children: [
-                    // First instance of text (scrolling)
-                    Positioned(
-                      left: _scrollPosition,
-                      top: 0,
-                      bottom: 0,
-                      child: _buildAlertText(),
-                    ),
-                    // Second instance of text (for seamless loop)
-                    Positioned(
-                      left: _scrollPosition + 800, // Offset for seamless loop
-                      top: 0,
-                      bottom: 0,
-                      child: _buildAlertText(),
-                    ),
-                  ],
-                );
-              },
-            ),
+      child: Center( // Center to align text properly
+        child: SingleChildScrollView( // Use SingleChildScrollView for manual scrolling
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.priority_high,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  _scamAlerts[_currentAlertIndex],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
