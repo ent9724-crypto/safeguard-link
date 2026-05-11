@@ -383,6 +383,30 @@ class _DashboardCleanState extends State<DashboardClean> {
                 
                 SizedBox(height: isMobile ? 16 : 20),
                 
+                // Scam-Proof Guide Button
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showScamProofGuide(),
+                    icon: Icon(Icons.shield, size: isMobile ? 20 : 24),
+                    label: Text(
+                      _kindergartenMode ? '🛡️ Safety Guide' : 'Simpan Panduan Kecemasan',
+                      style: TextStyle(fontSize: isMobile ? 14 : 16, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16 : 20,
+                        vertical: isMobile ? 12 : 16,
+                      ),
+                      alignment: Alignment.centerLeft,
+                    ),
+                  ),
+                ),
+                
+                SizedBox(height: isMobile ? 16 : 20),
+                
                 // Verify Document Button
                 Container(
                   width: double.infinity,
@@ -413,12 +437,7 @@ class _DashboardCleanState extends State<DashboardClean> {
                 Container(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const NsrcPrepPage()),
-                      );
-                    },
+                    onPressed: () => _show997ConfirmationDialog(),
                     icon: Icon(Icons.emergency, size: isMobile ? 20 : 24),
                     label: Text(
                       _kindergartenMode ? '🚨 Call 997 Helper' : '997 Hotline - NSRC',
@@ -547,6 +566,83 @@ class _DashboardCleanState extends State<DashboardClean> {
                             alignment: Alignment.centerLeft,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                SizedBox(height: isMobile ? 16 : 20),
+                
+                // Quick Contact Section
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.green.withOpacity(0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.people,
+                            color: Colors.green,
+                            size: isMobile ? 20 : 24,
+                          ),
+                          SizedBox(width: isMobile ? 8 : 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Hubungi Keluarga',
+                                  style: TextStyle(
+                                    fontSize: isMobile ? 14 : 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                SizedBox(height: isMobile ? 2 : 4),
+                                Text(
+                                  'Sahkan cerita kecemasan dengan keluarga',
+                                  style: TextStyle(
+                                    fontSize: isMobile ? 11 : 12,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: isMobile ? 12 : 16),
+                      
+                      // Family Contact Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildFamilyContactButton(
+                              'Anak',
+                              'Saya',
+                              Icons.person,
+                              Colors.blue,
+                              '+60123456789', // Replace with actual number
+                            ),
+                          ),
+                          SizedBox(width: isMobile ? 12 : 16),
+                          Expanded(
+                            child: _buildFamilyContactButton(
+                              'Pakcik',
+                              'Pakcik',
+                              Icons.person_outline,
+                              Colors.purple,
+                              '+60198765432', // Replace with actual number
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -928,7 +1024,357 @@ class _DashboardCleanState extends State<DashboardClean> {
     }
   }
 
-  void _showSecurityAlert() {
+  void _show997ConfirmationDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.red.shade50,
+          title: Row(
+            children: [
+              Icon(Icons.warning, color: Colors.red.shade700, size: 32),
+              const SizedBox(width: 12),
+              Text(
+                'Pengesahan Kecemasan',
+                style: TextStyle(
+                  color: Colors.red.shade700,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 16),
+              Text(
+                'Adakah anda sedang dalam kecemasan scam?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Sila pastikan ini adalah kecemasan sebenar sebelum membuat panggilan.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Batal',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NsrcPrepPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                'YA, CALL SEKARANG',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFamilyContactButton(String title, String subtitle, IconData icon, Color color, String phoneNumber) {
+  final bool isMobile = MediaQuery.of(context).size.width < 600;
+  
+  return Container(
+    height: isMobile ? 80 : 100,
+    child: ElevatedButton(
+      onPressed: () => _callFamilyMember(title, phoneNumber),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color.withOpacity(0.1),
+        foregroundColor: color,
+        side: BorderSide(color: color, width: 2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: EdgeInsets.all(isMobile ? 8 : 12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            backgroundColor: color,
+            radius: isMobile ? 20 : 25,
+            child: Icon(icon, color: Colors.white, size: isMobile ? 20 : 24),
+          ),
+          SizedBox(height: isMobile ? 4 : 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: isMobile ? 12 : 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: isMobile ? 10 : 12,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+void _callFamilyMember(String name, String phoneNumber) async {
+  final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+  
+  try {
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Memanggil $name...'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tidak dapat membuat panggilan'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
+void _showScamProofGuide() {
+  showDialog(
+    context: context,
+    builder: (context) => Dialog(
+      backgroundColor: Colors.indigo.shade50,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        constraints: const BoxConstraints(maxHeight: 500),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.indigo,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.shield, color: Colors.white, size: 24),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Panduan Kecemasan Scam',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Content
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '3 Peraturan Pertahanan Scam:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.indigo,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    _buildRuleItem(
+                      '1',
+                      'JANGAN KLIK LINK',
+                      'Jangan sekali-kali klik link dari nombor tidak dikenali',
+                      Icons.link_off,
+                      Colors.red,
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    _buildRuleItem(
+                      '2',
+                      'JANGAN BERI OTP',
+                      'OTP adalah kata laluan anda. Jangan beri kepada sesiapa pun',
+                      Icons.lock,
+                      Colors.orange,
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    _buildRuleItem(
+                      '3',
+                      'DAIL 997',
+                      'Jika ragu-ragu, terus panggil 997 (NSRC)',
+                      Icons.phone,
+                      Colors.green,
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.indigo.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Ingat:',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.indigo,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Scammers gunakan teknik kecemasan. Tenang dan fikir sebelum bertindak.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildRuleItem(String number, String title, String description, IconData icon, Color color) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: color.withOpacity(0.3), width: 2),
+      boxShadow: [
+        BoxShadow(
+          color: color.withOpacity(0.1),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          backgroundColor: color,
+          radius: 20,
+          child: Text(
+            number,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: color, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+void _showSecurityAlert() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
