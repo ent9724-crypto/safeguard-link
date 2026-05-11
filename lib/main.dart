@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dashboard_clean.dart';
+import 'dashboard_minimal.dart';
 
 void main() {
-  // Enable full dashboard
+  // Test with minimal dashboard
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.green),
-    home: const DashboardClean(),
+    home: const DashboardMinimal(),
   ));
 }
