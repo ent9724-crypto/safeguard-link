@@ -595,6 +595,7 @@ class LiveScamIntelligence extends StatelessWidget {
                       'Jangan percaya suara kecemasan anak/cucu tanpa Safe Word.',
                       Icons.record_voice_over,
                       Colors.purple,
+                      onTap: () => _showAIVoiceDetails(context),
                     ),
                     
                     SizedBox(height: isMobile ? 6 : 8),
@@ -606,6 +607,7 @@ class LiveScamIntelligence extends StatelessWidget {
                       'Polis tidak akan minta bayaran melalui WhatsApp.',
                       Icons.local_police,
                       Colors.blue,
+                      onTap: () => _showLHDNDetails(context),
                     ),
                     
                     SizedBox(height: isMobile ? 6 : 8),
@@ -617,6 +619,7 @@ class LiveScamIntelligence extends StatelessWidget {
                       'Jangan klik link SMS dari kurier tidak dikenali.',
                       Icons.local_shipping,
                       Colors.orange,
+                      onTap: () => _showParcelDetails(context),
                     ),
                   ],
                 ),
@@ -661,7 +664,7 @@ class LiveScamIntelligence extends StatelessWidget {
     );
   }
 
-  Widget _buildScamItem(bool isMobile, String title, String description, IconData icon, Color color) {
+  Widget _buildScamItem(bool isMobile, String title, String description, IconData icon, Color color, {VoidCallback? onTap}) {
     return Container(
       padding: EdgeInsets.all(isMobile ? 8.0 : 10.0),
       decoration: BoxDecoration(
@@ -669,38 +672,42 @@ class LiveScamIntelligence extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: color,
-            size: isMobile ? 20 : 24,
-          ),
-          SizedBox(width: isMobile ? 8 : 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: isMobile ? 12 : 14,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                ),
-                SizedBox(height: isMobile ? 2 : 4),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: isMobile ? 10 : 12,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: isMobile ? 20 : 24,
             ),
-          ),
-        ],
+            SizedBox(width: isMobile ? 8 : 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: isMobile ? 12 : 14,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                  SizedBox(height: isMobile ? 2 : 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: isMobile ? 10 : 12,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -716,5 +723,291 @@ class LiveScamIntelligence extends StatelessWidget {
     } catch (e) {
       debugPrint('Error launching MCMC portal: $e');
     }
+  }
+
+  void _showAIVoiceDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('AI Voice Cloning Details'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.record_voice_over, color: Colors.purple, size: 48),
+                const SizedBox(height: 16),
+                const Text(
+                  'AI Voice Cloning Scams',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.purple),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'How AI Voice Cloning Works:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '• Scammers use AI to clone voices of family members',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• They create convincing voice messages asking for money',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Always verify with family members through different channels',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Protection:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.purple),
+                ),
+                const Text(
+                  '• Use family Safe Word for verification',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Call family members directly if suspicious',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Report to MCMC or PDRM immediately',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _launchMCMCPortal();
+              },
+              child: const Text('Report to MCMC'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLHDNDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('LHDN/PDRM Impersonation Details'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.local_police, color: Colors.blue, size: 48),
+                const SizedBox(height: 16),
+                const Text(
+                  'LHDN/PDRM Impersonation Scams',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'How Impersonation Works:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '• Scammers impersonate LHDN or PDRM officers',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• They claim you owe taxes or have legal issues',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• They demand immediate payment via WhatsApp/phone',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• They threaten legal action if payment not made',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Real Government Contact:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.blue),
+                ),
+                const Text(
+                  '• LHDN never demands payment via WhatsApp',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• LHDN uses official letters and phone calls',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Verify through official LHDN website or visit office',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Report Immediately:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.blue),
+                ),
+                const Text(
+                  '• Call LHDN hotline: 03-8882-6000',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Report to MCMC: 03-8000-8000',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Visit nearest police station',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _launchMCMCPortal();
+              },
+              child: const Text('Contact LHDN'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showParcelDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Parcel Scams Details'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.local_shipping, color: Colors.orange, size: 48),
+                const SizedBox(height: 16),
+                const Text(
+                  'Parcel Delivery Scams',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'How Parcel Scams Work:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '• Scammers send fake delivery notifications',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• They claim customs fees or import duties',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• They provide fake tracking links',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• They demand payment for package release',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'How to Verify:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.orange),
+                ),
+                const Text(
+                  '• Check with original sender/company',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Use official tracking websites',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Call company official hotline',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Never pay via unknown links',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Red Flag Indicators:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.orange),
+                ),
+                const Text(
+                  '• Urgent payment demands',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Generic greetings (no personal details)',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Suspicious sender addresses',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Poor grammar/spelling in official messages',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Report Scams:',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.orange),
+                ),
+                const Text(
+                  '• MCMC: 03-8000-8000',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• NST: 03-8888-8000',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const Text(
+                  '• Police: 999 or nearest station',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _launchMCMCPortal();
+              },
+              child: const Text('Report to MCMC'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
