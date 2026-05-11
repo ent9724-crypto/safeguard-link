@@ -159,7 +159,7 @@ class _DashboardCleanState extends State<DashboardClean> {
                           fontSize: isMobile ? 16 : 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
-                          height: 1.4,
+                          height: 1.2,
                         ),
                       ),
                     ],
