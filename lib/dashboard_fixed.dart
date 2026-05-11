@@ -86,15 +86,20 @@ class _DashboardFixedState extends State<DashboardFixed> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+          final padding = isMobile ? 12.0 : 16.0;
+          
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(padding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             // Kindergarten Mode Toggle - matching image design
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(12),
@@ -108,9 +113,9 @@ class _DashboardFixedState extends State<DashboardFixed> {
                       Icon(
                         Icons.child_care_rounded,
                         color: _kindergartenMode ? const Color(0xFFffe22f) : Colors.white70,
-                        size: 24,
+                        size: isMobile ? 20 : 24,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: isMobile ? 8 : 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,15 +123,16 @@ class _DashboardFixedState extends State<DashboardFixed> {
                             Text(
                               'Kindergarten Mode',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: isMobile ? 14 : 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
+                            SizedBox(height: isMobile ? 2 : 4),
                             Text(
                               'Use very simple, child-friendly descriptions across the app.',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: isMobile ? 11 : 12,
                                 color: Colors.white70,
                               ),
                             ),
@@ -141,6 +147,7 @@ class _DashboardFixedState extends State<DashboardFixed> {
                           });
                         },
                         activeColor: const Color(0xFFffe22f),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ],
                   ),
@@ -167,26 +174,30 @@ class _DashboardFixedState extends State<DashboardFixed> {
                 icon: Icon(
                   Icons.lock,
                   color: _isLeaderMode ? Colors.orange : Colors.white70,
+                  size: isMobile ? 20 : 24,
                 ),
                 label: Text('Parental Controls'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black.withOpacity(0.3),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 16 : 20, 
+                    vertical: isMobile ? 12 : 16
+                  ),
                   alignment: Alignment.centerLeft,
                 ),
               ),
             ),
             
-            const SizedBox(height: 16),
+            SizedBox(height: isMobile ? 12 : 16),
             
             // Welcome Message - matching image design
             Text(
               _kindergartenMode 
                 ? 'Welcome! Tap any button and I will guide you step by step.'
                 : 'Welcome! Use simple safety tools or open more detailed parent controls.',
-              style: const TextStyle(
-                fontSize: 16,
+              style: TextStyle(
+                fontSize: isMobile ? 14 : 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
                 height: 1.4,
@@ -442,30 +453,39 @@ class _DashboardFixedState extends State<DashboardFixed> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _executeUrlHeuristics,
-                icon: const Icon(Icons.language, size: 24),
-                label: const Text('Execute URL Heuristics'),
+                icon: Icon(Icons.language, size: isMobile ? 20 : 24),
+                label: Text('Execute URL Heuristics'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightBlue,
                   foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 16 : 20, 
+                    vertical: isMobile ? 12 : 16
+                  ),
                   alignment: Alignment.centerLeft,
                 ),
               ),
             ),
             
-            const SizedBox(height: 12),
+            SizedBox(height: isMobile ? 8 : 12),
             
             // Security Alert Button
             Container(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _showSecurityAlert,
-                icon: const Icon(Icons.security, size: 24),
-                label: const Text('Security Alert: Verify Mule Accounts via SemakMule before transfers.'),
+                icon: Icon(Icons.security, size: isMobile ? 20 : 24),
+                label: Text(
+                  'Security Alert: Verify Mule Accounts via SemakMule before transfers.',
+                  style: TextStyle(fontSize: isMobile ? 13 : 14),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightBlue,
                   foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 16 : 20, 
+                    vertical: isMobile ? 12 : 16
+                  ),
                   alignment: Alignment.centerLeft,
                 ),
               ),
@@ -692,8 +712,10 @@ class _DashboardFixedState extends State<DashboardFixed> {
             ),
           ],
         ),
-      ),
-    );
+            );
+          },
+        ),
+      );
   }
 
   void _call997() async {
