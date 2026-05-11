@@ -32,20 +32,11 @@ class _SafeIdentityFieldState extends State<SafeIdentityField> {
   bool _showPIIWarning = false;
   bool _isICDetected = false;
 
-  // Malaysian IC format: XXXXXX-XX-XXXX (where X is digit)
+  // Malaysian IC format: r'^\d{6}-?\d{2}-?\d{4}$' (dashes optional)
   static final RegExp _malaysianICRegex = RegExp(
-    r'^(\d{6})-(\d{2})-(\d{4})$',
+    r'^\d{6}-?\d{2}-?\d{4}$',
     caseSensitive: false,
   );
-
-  // Advanced IC patterns to catch partial inputs
-  static final List<RegExp> _icPatterns = [
-    RegExp(r'^\d{6}-\d{2}-\d{4}$'), // Complete format
-    RegExp(r'^\d{12}$'), // Without dashes
-    RegExp(r'^\d{6}-\d{6}$'), // Partial format
-    RegExp(r'^\d{6}-\d{2}-\d{1,3}$'), // Partial end
-    RegExp(r'^\d{1,5}-\d{2}-\d{4}$'), // Partial start
-  ];
 
   @override
   void initState() {
@@ -67,77 +58,46 @@ class _SafeIdentityFieldState extends State<SafeIdentityField> {
   void _onTextChanged() {
     final text = _controller.text;
     
-    // Debounce the validation
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      _validateAndMask(text);
-    });
-  }
-
-  void _validateAndMask(String input) {
-    setState(() {
-      _actualValue = input;
-      _maskedValue = _maskICNumber(input);
-      
-      // Check for Malaysian IC patterns
-      _isICDetected = _isMalaysianIC(input);
-      
-      if (_isICDetected && !_showPIIWarning) {
-        _showPIIWarning = true;
-        _showPIIAlertDialog();
-        widget.onICDetected?.call(input);
-      }
-    });
-    
-    widget.onChanged?.call(input);
-  }
-
-  bool _isMalaysianIC(String input) {
-    final cleanedInput = input.replaceAll(RegExp(r'[^\d-]'), '');
-    
-    for (final pattern in _icPatterns) {
-      if (pattern.hasMatch(cleanedInput)) {
-        return true;
-      }
+    // Check if 12th digit is typed (psychological friction trigger)
+    final digitsOnly = text.replaceAll(RegExp(r'[^\d]'), '');
+    if (digitsOnly.length == 12 && !_showPIIWarning) {
+      _showPIIWarning = true;
+      _showPIIAlertDialog();
+      widget.onICDetected?.call(text);
     }
     
-    return false;
+    // Update masking
+    setState(() {
+      _actualValue = text;
+      _maskedValue = _maskICNumber(text);
+      _isICDetected = _malaysianICRegex.hasMatch(text.replaceAll(RegExp(r'[^\d-]'), ''));
+    });
+    
+    widget.onChanged?.call(text);
   }
 
   String _maskICNumber(String input) {
-    if (!_isMalaysianIC(input)) {
-      return input;
-    }
+    final digitsOnly = input.replaceAll(RegExp(r'[^\d]'), '');
     
-    final cleanedInput = input.replaceAll(RegExp(r'[^\d-]'), '');
-    
-    // Format: XXXXXX-XX-XXXX
-    if (cleanedInput.length >= 12) {
-      final part1 = cleanedInput.substring(0, 6);
-      final part2 = cleanedInput.substring(6, 8);
-      final part3 = cleanedInput.substring(8, 12);
+    // Show only last 4 digits, mask the rest
+    if (digitsOnly.length > 4) {
+      final last4 = digitsOnly.substring(digitsOnly.length - 4);
+      final maskedPart = '*' * (digitsOnly.length - 4);
       
-      return '******-**-$part3';
-    } else if (cleanedInput.length >= 8 && cleanedInput.contains('-')) {
-      final parts = cleanedInput.split('-');
-      if (parts.length >= 2) {
-        final masked = List<String>.from(parts);
-        for (int i = 0; i < masked.length - 1; i++) {
-          if (masked[i].length > 2) {
-            masked[i] = '*' * masked[i].length;
-          } else {
-            masked[i] = '**';
-          }
-        }
-        return masked.join('-');
+      // Format with dashes: XXXXXX-XX-XXXX
+      if (digitsOnly.length >= 12) {
+        final part1 = maskedPart.substring(0, 6);
+        final part2 = maskedPart.substring(6, 8);
+        final part3 = last4;
+        return '$part1-$part2-$part3';
+      } else if (digitsOnly.length >= 8) {
+        final part1 = maskedPart.substring(0, 6);
+        final part2 = digitsOnly.length == 8 ? last4.substring(0, 2) : maskedPart.substring(6, 8);
+        final part3 = digitsOnly.length == 8 ? '' : '-$last4';
+        return '$part1-$part2$part3';
+      } else {
+        return '$maskedPart$last4';
       }
-    }
-    
-    // Partial masking for incomplete IC numbers
-    if (cleanedInput.length > 4) {
-      final visiblePart = cleanedInput.substring(cleanedInput.length - 4);
-      final maskedPart = '*' * (cleanedInput.length - 4);
-      return '$maskedPart$visiblePart';
     }
     
     return input;
@@ -156,7 +116,7 @@ class _SafeIdentityFieldState extends State<SafeIdentityField> {
             Icon(Icons.warning, color: Colors.white, size: 28),
             SizedBox(width: 12),
             Text(
-              '🛑 STOP',
+              '🛑 PROTECT YOUR IDENTITY',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -165,75 +125,34 @@ class _SafeIdentityFieldState extends State<SafeIdentityField> {
             ),
           ],
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'PERSONAL IDENTIFICATION DETECTED',
+            Text(
+              'You just typed a Malaysian IC number.',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
-              'Is this an official PDRM or LHDN app?',
+            SizedBox(height: 12),
+            Text(
+              'Is this an official government app (like MyJPJ or MyTax)?',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'If not, delete this immediately.',
+            SizedBox(height: 8),
+            Text(
+              'If a stranger asked you for this, they are trying to steal your identity. Delete it now.',
               style: TextStyle(
                 color: Colors.yellow,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '⚠️ SECURITY RISKS:',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    '• Identity theft and fraud\n'
-                    '• Unauthorized access to personal data\n'
-                    '• Financial scams using stolen IC\n'
-                    '• Criminal activities under your name',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Your IC number has been automatically masked for protection.',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
               ),
             ),
           ],
@@ -303,13 +222,13 @@ class _SafeIdentityFieldState extends State<SafeIdentityField> {
           ),
           child: TextField(
             controller: _controller,
-            obscureText: widget.obscureText && !_isICDetected,
+            obscureText: true, // Always obscure for privacy
             style: TextStyle(
               color: Colors.white,
-              fontFamily: _isICDetected ? 'monospace' : null,
+              fontFamily: 'monospace',
             ),
             decoration: InputDecoration(
-              hintText: widget.hint ?? 'Enter text...',
+              hintText: widget.hint ?? 'Enter IC number...',
               hintStyle: TextStyle(color: Colors.white54),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(12),
