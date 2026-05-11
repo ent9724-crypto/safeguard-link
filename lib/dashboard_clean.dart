@@ -4,6 +4,7 @@ import 'security/secret_vault_screen.dart';
 import 'security/voice_guard_service.dart';
 import 'security/safe_identity_field.dart';
 import 'widgets/media_verification_widget.dart';
+import 'nsrc_prep_page.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -389,6 +390,35 @@ class _DashboardCleanState extends State<DashboardClean> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16 : 20,
+                        vertical: isMobile ? 12 : 16,
+                      ),
+                      alignment: Alignment.centerLeft,
+                    ),
+                  ),
+                ),
+                
+                SizedBox(height: isMobile ? 16 : 20),
+                
+                // 997 Emergency Hotline Button
+                Container(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NsrcPrepPage()),
+                      );
+                    },
+                    icon: Icon(Icons.emergency, size: isMobile ? 20 : 24),
+                    label: Text(
+                      _kindergartenMode ? '🚨 Call 997 Helper' : '997 Hotline - NSRC',
+                      style: TextStyle(fontSize: isMobile ? 14 : 16, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(
                         horizontal: isMobile ? 16 : 20,
