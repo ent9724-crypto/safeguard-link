@@ -278,28 +278,33 @@ class _DashboardFixedState extends State<DashboardFixed> {
               const SizedBox(height: 20),
             ],
             
-            // Identity Vault Section
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            // Identity Vault Section - matching other elements size
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+              decoration: BoxDecoration(
+                color: _kindergartenMode 
+                    ? const Color(0xFFFFF9C0).withOpacity(0.9)
+                    : const Color(0xFFE3F2FD).withOpacity(0.9),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _kindergartenMode 
+                      ? const Color(0xFFE91E63).withOpacity(0.3)
+                      : Colors.cyan.withOpacity(0.3),
+                ),
               ),
-              elevation: 6,
-              color: _kindergartenMode 
-                  ? const Color(0xFFFFF9C0) 
-                  : const Color(0xFFE3F2FD),
-              child: Padding(
-                padding: EdgeInsets.all(_kindergartenMode ? 24.0 : 16.0),
-                child: Column(
-                  children: [
-                    Text(
-                      _kindergartenMode ? 'Family Safe Word' : 'Identity Vault',
-                      style: TextStyle(
-                        fontSize: _kindergartenMode ? 24 : 18,
-                        fontWeight: FontWeight.bold,
-                        color: _kindergartenMode ? const Color(0xFFE91E63) : Colors.cyan,
-                      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _kindergartenMode ? 'Family Safe Word' : 'Identity Vault',
+                    style: TextStyle(
+                      fontSize: isMobile ? 14 : 16,
+                      fontWeight: FontWeight.bold,
+                      color: _kindergartenMode ? const Color(0xFFE91E63) : Colors.cyan[800],
                     ),
-                    const SizedBox(height: 15),
+                  ),
+                  SizedBox(height: isMobile ? 8 : 12),
                     
                     if (!_showVault) ...[
                       ElevatedButton.icon(
@@ -360,7 +365,12 @@ class _DashboardFixedState extends State<DashboardFixed> {
               ),
             ),
             
-            const SizedBox(height: 16),
+            SizedBox(height: isMobile ? 12 : 16),
+            
+            // Live Scam Intelligence Section
+            const LiveScamIntelligence(),
+            
+            SizedBox(height: isMobile ? 12 : 16),
             
             // Voice Guard Toggle
             Row(
@@ -1055,5 +1065,246 @@ class _DashboardFixedState extends State<DashboardFixed> {
         );
       },
     );
+  }
+}
+
+// Live Scam Intelligence Stateless Widget
+class LiveScamIntelligence extends StatelessWidget {
+  const LiveScamIntelligence({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 600;
+        
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.red.withOpacity(0.3)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with Live indicator
+              Row(
+                children: [
+                  Icon(
+                    Icons.warning,
+                    color: Colors.red,
+                    size: isMobile ? 20 : 24,
+                  ),
+                  SizedBox(width: isMobile ? 8 : 12),
+                  Expanded(
+                    child: Text(
+                      'Live Scam Intelligence',
+                      style: TextStyle(
+                        fontSize: isMobile ? 14 : 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 6 : 8,
+                      vertical: isMobile ? 2 : 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      'LIVE',
+                      style: TextStyle(
+                        fontSize: isMobile ? 10 : 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
+              SizedBox(height: isMobile ? 12 : 16),
+              
+              // Amaran Scam Terkini Button
+              Container(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _launchMCMCPortal,
+                  icon: Icon(Icons.security, size: isMobile ? 20 : 24),
+                  label: Text(
+                    'Amaran Scam Terkini (MCMC/PDRM)',
+                    style: TextStyle(fontSize: isMobile ? 14 : 16, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 16 : 20,
+                      vertical: isMobile ? 12 : 16,
+                    ),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+              ),
+              
+              SizedBox(height: isMobile ? 12 : 16),
+              
+              // Local Data Card with 3 static scam types
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Latest Scam Tactics in Malaysia 2026:',
+                      style: TextStyle(
+                        fontSize: isMobile ? 12 : 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: isMobile ? 8 : 12),
+                    
+                    // AI Voice Cloning
+                    _buildScamItem(
+                      isMobile,
+                      'AI Voice Cloning',
+                      'Jangan percaya suara kecemasan anak/cucu tanpa Safe Word.',
+                      Icons.record_voice_over,
+                      Colors.purple,
+                    ),
+                    
+                    SizedBox(height: isMobile ? 6 : 8),
+                    
+                    // LHDN/PDRM Impersonation
+                    _buildScamItem(
+                      isMobile,
+                      'LHDN/PDRM Impersonation',
+                      'Polis tidak akan minta bayaran melalui WhatsApp.',
+                      Icons.local_police,
+                      Colors.blue,
+                    ),
+                    
+                    SizedBox(height: isMobile ? 6 : 8),
+                    
+                    // Parcel Scams
+                    _buildScamItem(
+                      isMobile,
+                      'Parcel Scams',
+                      'Jangan klik link SMS dari kurier tidak dikenali.',
+                      Icons.local_shipping,
+                      Colors.orange,
+                    ),
+                  ],
+                ),
+              ),
+              
+              SizedBox(height: isMobile ? 8 : 12),
+              
+              // Safety Friction Footer
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(isMobile ? 8.0 : 12.0),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.red.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.phone,
+                      color: Colors.red,
+                      size: isMobile ? 16 : 20,
+                    ),
+                    SizedBox(width: isMobile ? 6 : 8),
+                    Expanded(
+                      child: Text(
+                        'Jika sudah terpedaya, terus dail 997 (NSRC).',
+                        style: TextStyle(
+                          fontSize: isMobile ? 11 : 13,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildScamItem(bool isMobile, String title, String description, IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(isMobile ? 8.0 : 10.0),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: isMobile ? 20 : 24,
+          ),
+          SizedBox(width: isMobile ? 8 : 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: isMobile ? 12 : 14,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                SizedBox(height: isMobile ? 2 : 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: isMobile ? 10 : 12,
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _launchMCMCPortal() async {
+    final Uri url = Uri.parse('https://sebenarnya.my/');
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      // Handle error silently to prevent crashes
+      debugPrint('Error launching MCMC portal: $e');
+    }
   }
 }
